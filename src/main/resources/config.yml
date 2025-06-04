@@ -43,6 +43,15 @@ scheduled-broadcast: #uses mini message format
     - "<white>Want to share a kit? Use the <aqua>/sharekit <slot><white> command!"
     - "<white>Type <aqua>/kit<white>, <aqua>/k <white>or <aqua>/pk<white> to get started!"
 
+broadcast:
+  disabled-worlds: []
+  disabled-regions:
+    world:
+      - "arena"
+      - "pvpzone"
+    minigames:
+      - "lobby"
+
 
 kitroom:
   items:
