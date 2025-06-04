@@ -5,6 +5,7 @@ author: Noah Ross
 api-version: 1.19
 softdepend:
   - PlaceholderAPI
+  - WorldGuard
 
 
 permissions:
