@@ -23,11 +23,10 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.plugin.Plugin;
 
 // WorldGuard imports (soft dependency)
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -46,7 +45,7 @@ public class BroadcastManager {
     public BroadcastManager(Plugin plugin) {
         this.plugin = plugin;
         this.audience = net.kyori.adventure.platform.bukkit.BukkitAudiences.create(plugin);
-        this.kitroomBroadcastCooldown = new CooldownManager(10); // Example: 10 seconds cooldown for kitroom
+        this.kitroomBroadcastCooldown = new CooldownManager(10); // 10 seconds cooldown for kitroom broadcasts
         instance = this;
     }
 
@@ -54,15 +53,23 @@ public class BroadcastManager {
         return instance;
     }
 
+    /**
+     * Checks if a broadcast should be sent for the given player, based on world and region restrictions.
+     * - Disables broadcast if the player is in a world listed in `broadcast.disabled-worlds`
+     * - Disables broadcast if the player is in a WorldGuard region listed in `broadcast.disabled-regions.<world>`
+     *   (only if WorldGuard is present)
+     * @param player the Player to check
+     * @return true if a broadcast should be sent, false otherwise
+     */
     public static boolean shouldBroadcast(Player player) {
         Plugin plugin = PerPlayerKit.getPlugin();
         String worldName = player.getWorld().getName();
 
-        // 1. Check disabled worlds
+        // Check disabled worlds
         List<String> disabledWorlds = plugin.getConfig().getStringList("broadcast.disabled-worlds");
         if (disabledWorlds.contains(worldName)) return false;
 
-        // 2. Check disabled regions if WorldGuard is present
+        // Check disabled regions if WorldGuard is present
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
             List<String> disabledRegions = plugin.getConfig().getStringList("broadcast.disabled-regions." + worldName);
             if (!disabledRegions.isEmpty()) {
@@ -128,7 +135,7 @@ public class BroadcastManager {
 
         int[] index = {0};
 
-        if (plugin.getConfig().getBoolean("scheduled-broadcast.enabled")) {
+        if (plugin.getConfig().getBoolean("scheduled-broadcast.enabled") && !messages.isEmpty()) {
             Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     audience.player(player).sendMessage(messages.get(index[0]));
@@ -142,10 +149,11 @@ public class BroadcastManager {
         audience.player(player).sendMessage(message);
     }
 
-    // Helper: Use your own way to get message and broadcast, this is just a placeholder
+    /**
+     * Helper: Use your own way to get message and broadcast, this is just a placeholder
+     */
     public void broadcastMessage(Player player, MessageKey key, CooldownManager cooldown) {
-        // Implement your message sending logic here
-        // Example placeholder:
+        // Implement your message sending logic here, example:
         String msg = ChatColor.GRAY + "[Kits] " + player.getName() + " has loaded a kit.";
         Bukkit.broadcastMessage(msg);
     }
