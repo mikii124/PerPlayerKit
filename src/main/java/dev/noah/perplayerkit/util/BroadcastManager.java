@@ -128,6 +128,13 @@ public class BroadcastManager {
         broadcastMessage(player, MessageKey.PLAYER_REGEARED, null);
     }
 
+    // ---- Added missing method ----
+    public void broadcastPlayerRepaired(Player player) {
+        if (!shouldBroadcast(player)) return;
+        broadcastMessage(player, MessageKey.PLAYER_REPAIRED, null);
+    }
+    // -----------------------------
+
     // Scheduled broadcast example, unchanged
     public void startScheduledBroadcast() {
         List<Component> messages = new ArrayList<>();
